@@ -1,26 +1,27 @@
-
-#!/bin/bash
+#!/bin/sh
 
 set -e
-set -x
 
+echo "Interpolating config..."
 export CONFIG=$(pwd)/pipeline/tasks/integration_config.json
 
 # Replace all variables with parameters from concourse
 # Parameters are received as environment variables
-vars=(API_URI APPS_DOMAIN CF_USER CF_PASSOWRD CF_ORG CF_SPACE)
-for var in ${vars[@]}
-do
-  sed -i "s/\%${var}\%/${!var}/g" $CONFIG
-done
+sed -i 's,\%API_URI\%,'"${API_URI}"',g' $CONFIG
+sed -i 's,\%APPS_DOMAIN\%,'"${APPS_DOMAIN}"',g' $CONFIG
+sed -i 's,\%CF_USER\%,'"${CF_USER}"',g' $CONFIG
+sed -i 's,\%CF_PASSOWRD\%,'"${CF_PASSOWRD}"',g' $CONFIG
+sed -i 's,\%CF_ORG\%,'"${CF_ORG}"',g' $CONFIG
+sed -i 's,\%CF_SPACE\%,'"${CF_SPACE}"',g' $CONFIG
 
-echo "Using CONFIG=$CONFIG"
-
-# Downloading CF CLI.
-apk add --update curl
+echo "Installing packages..."
+apk add --update curl bash git
 curl -L 'https://cli.run.pivotal.io/stable?release=linux64-binary' | tar -zx -C /usr/local/bin
 
+# Link to gopath
+mkdir -p /go/src/github.com/cloudfoundry
+ln -s `pwd`/cf-smoke-tests /go/src/github.com/cloudfoundry/cf-smoke-tests
+
 # Run tests
-pushd cf-smoke-tests
-  ./bin/test -v
-popd
+echo "Starting tests..."
+cd /go/src/github.com/cloudfoundry/cf-smoke-tests && ./bin/test -v

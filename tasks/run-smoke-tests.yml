@@ -2,7 +2,9 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: golang:alpine
+    repository: golang
+    tag: alpine
+
 inputs:
   - name: cf-smoke-tests
   - name: pipeline
