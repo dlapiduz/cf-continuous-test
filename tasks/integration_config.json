@@ -1,0 +1,19 @@
+{
+  "suite_name"                      : "CF_SMOKE_TESTS",
+  "api"                             : "%API_URI%",
+  "apps_domain"                     : "%APPS_DOMAIN%",
+  "user"                            : "%CF_USER%",
+  "password"                        : "%CF_PASSOWRD%",
+  "org"                             : "%CF_ORG%",
+  "space"                           : "%CF_SPACE%",
+  "cleanup"                         : true,
+  "use_existing_org"                : true,
+  "use_existing_space"              : true,
+  "logging_app"                     : "",
+  "runtime_app"                     : "",
+  "enable_windows_tests"            : false,
+  "enable_etcd_cluster_check_tests" : false,
+  "etcd_ip_address"                 : "",
+  "backend"                         : "diego",
+  "skip_ssl_validation"             : true
+}

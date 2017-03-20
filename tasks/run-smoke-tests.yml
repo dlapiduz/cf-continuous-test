@@ -1,0 +1,19 @@
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: golang:alpine
+inputs:
+  - name: cf-smoke-tests
+  - name: pipeline
+
+params:
+  API_URI:
+  APPS_DOMAIN:
+  CF_USER:
+  CF_PASSOWRD:
+  CF_ORG:
+  CF_SPACE:
+
+run:
+  path: pipeline/tasks/run-smoke-tests.sh

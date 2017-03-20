@@ -1,0 +1,32 @@
+resources:
+- name: cf-smoke-tests
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry/cf-smoke-tests.git
+    branch: master
+- name: pipeline
+  type: git
+  source:
+    uri: https://github.com/dlapiduz/cf-continuous-test.git
+    branch: master
+- name: every-10-minutes
+  type: time
+  source:
+    interval: 10m
+jobs:
+- name: run-smoke-tests
+  plan:
+  - get: cf-smoke-tests
+  - get: pipeline
+  - get: cf-config
+  - get: every-10-minutes
+    trigger: true
+  - task: run-smoke-tests
+    file: pipeline/tasks/run-smoke-tests.yml
+    params:
+      API_URI: {{api_uri}}
+      APPS_DOMAIN: {{apps_domain}}
+      CF_USER: {{cf_user}}
+      CF_PASSOWRD: {{cf_password}}
+      CF_ORG: {{cf_org}}
+      CF_SPACE: {{cf_space}}
