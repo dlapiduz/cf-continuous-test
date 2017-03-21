@@ -18,7 +18,7 @@ jobs:
   plan:
   - get: cf-smoke-tests
   - get: pipeline
-  - get: cf-config
+    trigger: true
   - get: every-10-minutes
     trigger: true
   - task: run-smoke-tests
