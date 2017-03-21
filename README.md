@@ -20,4 +20,4 @@ Make a copy of `params.yml` and fill in the variables.
 
 ### Fly pipeline
 
-`fly -t concourse -p smoke-tests -c pipeline.yml -l params.yml`
+`fly -t concourse set-pipeline -p smoke-tests -c pipeline.yml -l params.yml`
