@@ -1,3 +1,10 @@
+resource_types:
+- name: slack-notification
+  type: docker-image
+  source:
+    repository: cfcommunity/slack-notification-resource
+    tag: latest
+
 resources:
 - name: cf-smoke-tests
   type: git
@@ -13,8 +20,13 @@ resources:
   type: time
   source:
     interval: 10m
+- name: slack-alert
+  type: slack-notification
+  source:
+    url: {{slack_hook_url}}
 jobs:
 - name: run-smoke-tests
+  build_logs_to_retain: 250
   plan:
   - get: cf-smoke-tests
   - get: pipeline
@@ -30,3 +42,17 @@ jobs:
       CF_PASSOWRD: {{cf_password}}
       CF_ORG: {{cf_org}}
       CF_SPACE: {{cf_space}}
+  on_success:
+    put: slack-alert
+    params:
+      icon_emoji: ":thumbsup:"
+      text: |
+        The smoke tests passed succesfully:
+        $ATC_EXTERNAL_URL/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME
+  on_failure:
+    put: slack-alert
+    params:
+      icon_emoji: ":red_circle:"
+      text: |
+        The smoke tests failed:
+          $ATC_EXTERNAL_URL/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME
