@@ -45,14 +45,14 @@ jobs:
   on_success:
     put: slack-alert
     params:
-      icon_emoji: ":thumbsup:"
+      icon_emoji: ":hospital:"
+      username: Health Bot
       text: |
-        The smoke tests passed succesfully:
-        $ATC_EXTERNAL_URL/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME
+        :+1: Smoke tests passed succesfully: <$ATC_EXTERNAL_URL/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View Build>
   on_failure:
     put: slack-alert
     params:
-      icon_emoji: ":red_circle:"
+      icon_emoji: ":hospital:"
+      username: Health Bot
       text: |
-        The smoke tests failed:
-          $ATC_EXTERNAL_URL/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME
+        :red_circle: Smoke tests failed: <$ATC_EXTERNAL_URL/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View Build>
