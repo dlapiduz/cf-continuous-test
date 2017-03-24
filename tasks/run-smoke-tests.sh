@@ -28,4 +28,4 @@ ln -s `pwd`/cf-smoke-tests /go/src/github.com/cloudfoundry/cf-smoke-tests
 echo "Starting tests..."
 cd /go/src/github.com/cloudfoundry/cf-smoke-tests && ./bin/test -v | tee $JOB_PWD/run-stats/build-output.txt
 
-tail -n 3 $JOB_PWD/run-stats/build-output.txt | grep "Ginkgo ran" | rev | cut -d' ' -f 1 | rev > $JOB_PWD/run-stats/build-time.txt
+tail -n 3 $JOB_PWD/run-stats/build-output.txt | grep "Ginkgo ran" | rev | cut -d' ' -f 1 | rev > $JOB_PWD/run-stats/build-time-$(date +%s).txt

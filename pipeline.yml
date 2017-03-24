@@ -24,6 +24,14 @@ resources:
   type: slack-notification
   source:
     url: {{slack_hook_url}}
+- name: stats-bucket
+  type: s3
+  source:
+    bucket: {{stats_bucket_name}}
+    regexp: build-time-(.*).txt
+    access_key_id: {{stats_access_key_id}}
+    secret_access_key: {{stats_secret_access_key}}
+    private: true
 jobs:
 - name: run-smoke-tests
   build_logs_to_retain: 250
@@ -42,17 +50,22 @@ jobs:
       CF_PASSOWRD: {{cf_password}}
       CF_ORG: {{cf_org}}
       CF_SPACE: {{cf_space}}
-    on_success:
-      put: slack-alert
-      params:
-        icon_emoji: ":hospital:"
-        username: Health Bot
-        text: |
-          :+1: Smoke tests passed succesfully: <$ATC_EXTERNAL_URL/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View Build>
-    on_failure:
-      put: slack-alert
-      params:
-        icon_emoji: ":hospital:"
-        username: Health Bot
-        text: |
-          :red_circle: Smoke tests failed: <$ATC_EXTERNAL_URL/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View Build>
+  - put: stats-bucket
+    params:
+      file: run-stats/build-time-*.txt
+  on_success:
+    put: slack-alert
+    params:
+      text_file: run-stats/build-time-*.txt
+      icon_emoji: ":hospital:"
+      username: Health Bot
+      text: |
+        :+1: Smoke tests passed succesfully ($TEXT_FILE_CONTENT): <$ATC_EXTERNAL_URL/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View Build>
+  on_failure:
+    put: slack-alert
+    params:
+      text_file: run-stats/build-time-*.txt
+      icon_emoji: ":hospital:"
+      username: Health Bot
+      text: |
+        :red_circle: Smoke tests failed ($TEXT_FILE_CONTENT): <$ATC_EXTERNAL_URL/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View Build>
