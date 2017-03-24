@@ -5,6 +5,8 @@ set -e
 echo "Interpolating config..."
 export CONFIG=$(pwd)/pipeline/tasks/integration_config.json
 
+export JOB_PWD=$(pwd)
+
 # Replace all variables with parameters from concourse
 # Parameters are received as environment variables
 sed -i 's,\%API_URI\%,'"${API_URI}"',g' $CONFIG
@@ -24,4 +26,6 @@ ln -s `pwd`/cf-smoke-tests /go/src/github.com/cloudfoundry/cf-smoke-tests
 
 # Run tests
 echo "Starting tests..."
-cd /go/src/github.com/cloudfoundry/cf-smoke-tests && ./bin/test -v
+cd /go/src/github.com/cloudfoundry/cf-smoke-tests && ./bin/test -v | tee $JOB_PWD/run-stats/build-output.txt
+
+tail -n 3 $JOB_PWD/run-stats/build-output.txt | grep "Ginkgo ran" | rev | cut -d' ' -f 1 | rev > $JOB_PWD/run-stats/build-time.txt

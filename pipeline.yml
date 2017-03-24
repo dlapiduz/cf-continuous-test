@@ -42,17 +42,17 @@ jobs:
       CF_PASSOWRD: {{cf_password}}
       CF_ORG: {{cf_org}}
       CF_SPACE: {{cf_space}}
-  on_success:
-    put: slack-alert
-    params:
-      icon_emoji: ":hospital:"
-      username: Health Bot
-      text: |
-        :+1: Smoke tests passed succesfully: <$ATC_EXTERNAL_URL/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View Build>
-  on_failure:
-    put: slack-alert
-    params:
-      icon_emoji: ":hospital:"
-      username: Health Bot
-      text: |
-        :red_circle: Smoke tests failed: <$ATC_EXTERNAL_URL/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View Build>
+    on_success:
+      put: slack-alert
+      params:
+        icon_emoji: ":hospital:"
+        username: Health Bot
+        text: |
+          :+1: Smoke tests passed succesfully: <$ATC_EXTERNAL_URL/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View Build>
+    on_failure:
+      put: slack-alert
+      params:
+        icon_emoji: ":hospital:"
+        username: Health Bot
+        text: |
+          :red_circle: Smoke tests failed: <$ATC_EXTERNAL_URL/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View Build>

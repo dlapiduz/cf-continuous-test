@@ -9,6 +9,9 @@ inputs:
   - name: cf-smoke-tests
   - name: pipeline
 
+outputs:
+  - name: run-stats
+
 params:
   API_URI:
   APPS_DOMAIN:
