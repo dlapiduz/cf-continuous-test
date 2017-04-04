@@ -11,6 +11,11 @@ resources:
   source:
     uri: https://github.com/cloudfoundry/cf-smoke-tests.git
     branch: master
+- name: cf-acceptance-tests
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry/cf-acceptance-tests.git
+    branch: master
 - name: pipeline
   type: git
   source:
@@ -20,6 +25,10 @@ resources:
   type: time
   source:
     interval: 10m
+- name: every-3-hours
+  type: time
+  source:
+    interval: 3h
 - name: slack-alert
   type: slack-notification
   source:
@@ -50,22 +59,40 @@ jobs:
       CF_PASSOWRD: {{cf_password}}
       CF_ORG: {{cf_org}}
       CF_SPACE: {{cf_space}}
+    on_failure:
+      put: slack-alert
+      params:
+        icon_emoji: ":hospital:"
+        username: Health Bot
+        text: |
+          :red_circle: Smoke tests failed: <$ATC_EXTERNAL_URL/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View Build>
+
   - put: stats-bucket
     params:
       file: run-stats/build-time-*.txt
-  on_success:
-    put: slack-alert
+- name: run-acceptance-tests
+  build_logs_to_retain: 250
+  plan:
+  - get: cf-acceptance-tests
+  - get: pipeline
+    trigger: true
+  - get: every-3-hours
+    trigger: true
+  - task: run-smoke-tests
+    file: pipeline/tasks/run-acceptance-tests.yml
     params:
-      text_file: run-stats/build-time-*.txt
-      icon_emoji: ":hospital:"
-      username: Health Bot
-      text: |
-        :+1: Smoke tests passed succesfully ($TEXT_FILE_CONTENT): <$ATC_EXTERNAL_URL/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View Build>
-  on_failure:
-    put: slack-alert
+      API_URI: {{api_uri}}
+      APPS_DOMAIN: {{apps_domain}}
+      CF_USER: {{cf_admin_user}}
+      CF_PASSOWRD: {{cf_admin_password}}
+    on_failure:
+      put: slack-alert
+      params:
+        icon_emoji: ":hospital:"
+        username: Health Bot
+        text: |
+          :red_circle: Acceptance tests failed: <$ATC_EXTERNAL_URL/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View Build>
+
+  - put: stats-bucket
     params:
-      text_file: run-stats/build-time-*.txt
-      icon_emoji: ":hospital:"
-      username: Health Bot
-      text: |
-        :red_circle: Smoke tests failed ($TEXT_FILE_CONTENT): <$ATC_EXTERNAL_URL/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View Build>
+      file: run-stats/acceptance-build-time-*.txt

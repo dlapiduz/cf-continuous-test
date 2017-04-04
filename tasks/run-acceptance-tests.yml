@@ -1,0 +1,22 @@
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: golang
+    tag: alpine
+
+inputs:
+  - name: cf-acceptance-tests
+  - name: pipeline
+
+outputs:
+  - name: run-stats
+
+params:
+  API_URI:
+  APPS_DOMAIN:
+  CF_USER:
+  CF_PASSOWRD:
+
+run:
+  path: pipeline/tasks/run-acceptance-tests.sh

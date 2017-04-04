@@ -5,7 +5,7 @@ set -e
 set -o pipefail
 
 echo "Interpolating config..."
-export CONFIG=$(pwd)/pipeline/tasks/integration_config.json
+export CONFIG=$(pwd)/pipeline/tasks/smoke_config.json
 
 export JOB_PWD=$(pwd)
 
