@@ -17,7 +17,7 @@ sed -i 's,\%CF_USER\%,'"${CF_USER}"',g' $CONFIG
 sed -i 's,\%CF_PASSOWRD\%,'"${CF_PASSOWRD}"',g' $CONFIG
 
 echo "Installing packages..."
-apk add --update curl bash git openssh
+apk add --update curl bash git openssh gzip
 curl -L 'https://cli.run.pivotal.io/stable?release=linux64-binary' | tar -zx -C /usr/local/bin
 
 # Link to gopath
