@@ -3,6 +3,7 @@
   "apps_domain" : "%APPS_DOMAIN%",
   "admin_user" : "%CF_USER%",
   "admin_password" : "%CF_PASSOWRD%",
+  "java_buildpack_name": "java_buildpack_offline",
   "skip_ssl_validation": true,
   "use_http": true,
   "include_apps": true,
